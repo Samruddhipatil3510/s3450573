@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "771600419684",
+    "project_id": "b-and-p-convenience-store",
+    "storage_bucket": "b-and-p-convenience-store.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771600419684:android:73eb727737c37a2baac871",
+        "android_client_info": {
+          "package_name": "com.example.bpconveniencestore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdaAXmuVnQS8I7mr5hSlfv3UIsEAPkIcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
