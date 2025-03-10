@@ -31,10 +31,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Greeting(buddy: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
+        text = "Hello $buddy! Welcome To B & P Convenience Store For Enjoy Your Shopping",
         modifier = modifier
+
     )
 }
 
