@@ -31,9 +31,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(buddy: String, modifier: Modifier = Modifier) {
+fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $buddy! Welcome To B & P Convenience Store For Enjoy Your Shopping",
+        text = "Hello $name! Welcome To B & P Convenience Store For Enjoy Your Shopping",
         modifier = modifier
 
     )
@@ -44,6 +44,6 @@ fun Greeting(buddy: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
 
     BpConveniencestoreTheme {
-        Greeting("Android")
+        Greeting("Buddy")
     }
 }
