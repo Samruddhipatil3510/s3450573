@@ -1,6 +1,12 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.google.gms.google.services) apply false
+dependencies {
+    // Jetpack Compose UI
+    implementation("androidx.compose.ui:ui:1.5.0")
+    implementation("androidx.compose.material3:material3:1.1.2")
+
+    // ✅ Add Jetpack Navigation Compose (this is important)
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+
+    // Firebase dependencies (if needed)
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }
