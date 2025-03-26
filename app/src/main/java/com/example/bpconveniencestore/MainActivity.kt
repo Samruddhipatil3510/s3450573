@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.example.bpconveniencestore.ui.theme.BpConveniencestoreTheme
 import com.google.firebase.auth.FirebaseAuth
