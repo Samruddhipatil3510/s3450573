@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.compose.compiler)
+
+
 }
 
 android {
@@ -64,6 +67,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.androidx.annotation)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,14 +75,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
-    implementation ("com.google.android.gms:play-services-base:18.5.0")
-
-
-    implementation("androidx.navigation:navigation-compose:2.8.4")
-    implementation("androidx.compose.material:material:1.7.5")
-
-    implementation ("androidx.compose.material3:material3:1.0.0")
-    implementation ("androidx.compose.ui:ui:1.4.0")
 
 }

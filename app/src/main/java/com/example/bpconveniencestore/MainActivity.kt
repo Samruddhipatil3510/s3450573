@@ -13,12 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.example.bpconveniencestore.ui.theme.BpConveniencestoreTheme
 import com.google.firebase.auth.FirebaseAuth
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
+
+
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun LoginScreen(navController: NavController) {
-    val auth = FirebaseAuth.getInstance()
+    val authService = Firebase_auth()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
@@ -70,19 +78,35 @@ fun LoginScreen(navController: NavController) {
             Button(
                 onClick = {
                     loading = true
-                    auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            loading = false
-                            if (task.isSuccessful) {
-                                navController.navigate("home")
-                            } else {
-                                Toast.makeText(
+
+                    authService.signInWithEmail(email, password) { task ->
+                        if (task.isSuccessful) {
+                            val user = task.result?.user
+                            navController.navigate("home")
+                            println("Login successful: ${user?.email}")
+                        } else {
+                            Toast.makeText(
                                     navController.context,
                                     "Login Failed: ${task.exception?.message}",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                            }
+                            println("Login failed: ${task.exception?.message}")
                         }
+                    }
+
+//                    auth.signInWithEmailAndPassword(email, password)
+//                        .addOnCompleteListener { task ->
+//                            loading = false
+//                            if (task.isSuccessful) {
+//                                navController.navigate("home")
+//                            } else {
+//                                Toast.makeText(
+//                                    navController.context,
+//                                    "Login Failed: ${task.exception?.message}",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            }
+//                        }
                 }
             ) {
                 Text("Login")
