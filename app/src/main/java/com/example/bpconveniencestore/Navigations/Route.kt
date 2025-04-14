@@ -1,4 +1,4 @@
-package com.example.bpconveniencestore
+package com.example.bpconveniencestore.Navigations
 
 object Route {
     const val Login = "login"

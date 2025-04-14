@@ -1,4 +1,4 @@
-package com.example.bpconveniencestore
+package com.example.bpconveniencestore.Navigations
 
 
 
@@ -7,12 +7,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.bpconveniencestore.Product.HomeScreen
+import com.example.bpconveniencestore.nonAuth.LoginScreen
+import com.example.bpconveniencestore.nonAuth.RegistrationScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
 
 //    val startDestination = if (currentUser != null) Route.Home else Route.Login
-    val startDestination =Route.Login
+    val startDestination = Route.Login
 
     NavHost(navController = navController, startDestination = startDestination) {
         unauthenticatedNavRoutes(navController)

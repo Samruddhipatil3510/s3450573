@@ -1,4 +1,4 @@
-package com.example.bpconveniencestore
+package com.example.bpconveniencestore.nonAuth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.bpconveniencestore.Firebase.FirebaseHelper
 
 @Composable
 fun RegistrationScreen(
