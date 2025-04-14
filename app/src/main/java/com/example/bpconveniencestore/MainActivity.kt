@@ -5,23 +5,30 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.bpconveniencestore.ui.theme.BpConveniencestoreTheme
-import com.google.firebase.auth.FirebaseAuth
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavController
-
 
 
 class MainActivity : ComponentActivity() {
@@ -33,17 +40,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             BpConveniencestoreTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "login") {
-                    composable("login") { LoginScreen(navController) }
-                    composable("home") { HomeScreen() }
-                }
+                AppNavigation(navController = navController)
+//                val navController = rememberNavController()
+//                NavHost(navController = navController, startDestination = "login") {
+//                    composable("login") { LoginScreen(navController) }
+//                    composable("home") { HomeScreen() }
+//
+//                    composable("registerscreen") { RegistrationScreen() }
+
+              //  }
             }
         }
     }
 }
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: NavController,
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit
+) {
     val authService = Firebase_auth()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -82,7 +98,7 @@ fun LoginScreen(navController: NavController) {
                     authService.signInWithEmail(email, password) { task ->
                         if (task.isSuccessful) {
                             val user = task.result?.user
-                            navController.navigate("home")
+                            onLoginSuccess()
                             println("Login successful: ${user?.email}")
                         } else {
                             Toast.makeText(
@@ -114,7 +130,7 @@ fun LoginScreen(navController: NavController) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        TextButton(onClick = { /* TODO: Navigate to SignUp Screen */ }) {
+        TextButton(onClick = onRegisterClick) {
             Text("Don't have an account? Sign Up")
         }
     }

@@ -1,0 +1,61 @@
+package com.example.bpconveniencestore
+
+
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+
+@Composable
+fun AppNavigation(navController: NavHostController) {
+
+//    val startDestination = if (currentUser != null) Route.Home else Route.Login
+    val startDestination =Route.Login
+
+    NavHost(navController = navController, startDestination = startDestination) {
+        unauthenticatedNavRoutes(navController)
+        authenticatedNavRoutes(navController)
+    }
+
+
+}
+
+fun NavGraphBuilder.unauthenticatedNavRoutes(navController: NavHostController) {
+    composable(Route.Login) {
+        LoginScreen(
+            navController,
+            onLoginSuccess = {
+                navController.navigate(Route.Home) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            },
+            onRegisterClick = {
+                navController.navigate(Route.Register)
+            }
+        )
+    }
+
+    composable(Route.Register) {
+        RegistrationScreen(
+            navController,
+            onRegisterSuccess = {
+                navController.navigate(Route.Home) {
+                    popUpTo(Route.Login) { inclusive = true }
+                }
+            },
+            onBackToLogin = {
+                navController.popBackStack()
+            }
+        )
+    }
+}
+
+
+
+fun NavGraphBuilder.authenticatedNavRoutes(navController: NavHostController) {
+    composable(Route.Home) {
+        HomeScreen()
+    }
+}
