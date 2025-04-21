@@ -16,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.bpconveniencestore.Firebase.FirebaseHelper
 import com.example.bpconveniencestore.Product.Model.Product
+import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 
 @Composable
-fun ProductCard(product: Product) {
+fun ProductCard(product: Product, loadMoreProducts: () -> Unit){
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -35,20 +37,38 @@ fun ProductCard(product: Product) {
             ) {
                 Icon(
                     Icons.Default.ShoppingCart, contentDescription = null,
-                    modifier = Modifier.align(Alignment.Center).padding(16.dp))
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp)
+                )
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(product.name, style = MaterialTheme.typography.titleMedium)
-                Text("₹${product.price}", style = MaterialTheme.typography.bodyMedium)
+                Text("£${product.price}", style = MaterialTheme.typography.bodyMedium)
                 Text(product.description, style = MaterialTheme.typography.bodySmall)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Button(onClick = { /* Add to cart or buy */ }) {
-                    Text("Buy")
+                if (UserPreferences.getUserData().usertype == "admin") {
+                    if (product.quantity == 0) {
+                        Button(onClick = {
+                            FirebaseHelper().updateProductQuantity(product, 10)
+                            loadMoreProducts()
+                        }) {
+                            Text("Update Quantity")
+                        }
+                    }
+                } else {
+                    if (product.quantity != 0) {
+                        Button(onClick = { /* Add to cart or buy */ }) {
+                            Text("Buy")
+                        }
+                    } else {
+                        Text("Not Available", style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
         }

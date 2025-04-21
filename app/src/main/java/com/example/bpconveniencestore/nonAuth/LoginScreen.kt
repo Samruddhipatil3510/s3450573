@@ -23,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bpconveniencestore.Firebase.FirebaseHelper
 import com.example.bpconveniencestore.Firebase.Firebase_auth
+import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 
 @Composable
 fun LoginScreen(
@@ -32,9 +34,10 @@ fun LoginScreen(
     onRegisterClick: () -> Unit
 ) {
     val authService = Firebase_auth()
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("adil@gmail.com") }
+    var password by remember { mutableStateOf("Adil123") }
     var loading by remember { mutableStateOf(false) }
+    val firebaseHelper = remember { FirebaseHelper() }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -69,6 +72,21 @@ fun LoginScreen(
                     authService.signInWithEmail(email, password) { task ->
                         if (task.isSuccessful) {
                             val user = task.result?.user
+
+                            if (user != null) {
+                                firebaseHelper.getUserByEmail(user.email.toString()) { userData ->
+                                    if (userData != null) {
+                                        val name = userData["name"].toString()
+                                        val email = userData["email"].toString()
+                                        val password = userData["password"].toString()
+                                        val usertype=userData["usertype"].toString()// if you store this (not recommended)
+                                        UserPreferences.saveUserData(name, email, password,usertype)
+                                        println("Name: $name, Email: $email")
+                                    } else {
+                                        println("No user found with that email.")
+                                    }
+                                }
+                            }
                             onLoginSuccess()
                             loading=false
                             println("Login successful: ${user?.email}")
@@ -82,26 +100,11 @@ fun LoginScreen(
                             println("Login failed: ${task.exception?.message}")
                         }
                     }
-
-//                    auth.signInWithEmailAndPassword(email, password)
-//                        .addOnCompleteListener { task ->
-//                            loading = false
-//                            if (task.isSuccessful) {
-//                                navController.navigate("home")
-//                            } else {
-//                                Toast.makeText(
-//                                    navController.context,
-//                                    "Login Failed: ${task.exception?.message}",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                            }
-//                        }
                 }
             ) {
                 Text("Login")
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
         TextButton(onClick = onRegisterClick) {
             Text("Don't have an account? Sign Up")

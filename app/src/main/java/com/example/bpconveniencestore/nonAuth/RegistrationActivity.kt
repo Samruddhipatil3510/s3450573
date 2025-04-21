@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bpconveniencestore.Firebase.FirebaseHelper
+import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 
 @Composable
 fun RegistrationScreen(
@@ -74,8 +75,10 @@ fun RegistrationScreen(
                             user.uid,
                             name,
                             email ,
-                            password,
+                            password,"Customer",
                             onSuccess = {
+                                UserPreferences.saveUserData(name, email, password,"Customer")
+                                println("Name: $name, Email: $email")
                                 onRegisterSuccess()
                                 Toast.makeText(context, "Dummy profile uploaded", Toast.LENGTH_SHORT).show()
                             },

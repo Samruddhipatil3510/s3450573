@@ -1,10 +1,15 @@
 package com.example.bpconveniencestore.Firebase
 
+import com.example.bpconveniencestore.Product.Model.Product
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.tasks.await
 
 class FirebaseHelper(
-    private val db:FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
 ) {
     private val auth: Firebase_auth = Firebase_auth()
 
@@ -13,7 +18,7 @@ class FirebaseHelper(
         email: String,
         password: String,
         onSuccess: (FirebaseUser) -> Unit,
-        onError: (String) -> Unit
+        onError: (String) -> Unit,
     ) {
         auth.registerWithEmail(email, password) { task ->
             if (task.isSuccessful) {
@@ -32,15 +37,17 @@ class FirebaseHelper(
         name: String,
         email: String,
         password: String,
+        usertype: String,
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: (String) -> Unit,
     ) {
 
 
         val userMap = hashMapOf(
             "name" to name,
             "email" to email,
-            "password" to password // ⚠️ Avoid storing passwords in plain text
+            "password" to password,
+            "usertype" to usertype// ⚠️ Avoid storing passwords in plain text
         )
 
         db.collection("users").document(userId)
@@ -52,4 +59,86 @@ class FirebaseHelper(
                 onError("Data save failed: ${it.message}")
             }
     }
+
+    fun getUserByEmail(email: String, onResult: (Map<String, Any>?) -> Unit) {
+
+
+        db.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val userData = documents.documents[0].data
+                    onResult(userData)
+                } else {
+                    onResult(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                exception.printStackTrace()
+                onResult(null)
+            }
+    }
+
+    fun storeProducts(products: List<Product>) {
+        val db = FirebaseFirestore.getInstance()
+
+        products.forEach { product ->
+            db.collection("products")
+                .whereEqualTo("name", product.name) // Use a unique field if available
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.isEmpty) {
+                        val docRef = db.collection("products").document() // Generate document reference
+                        val productWithId = product.copy(id = docRef.id)   // Copy product with ID
+
+                        docRef.set(productWithId)
+                            .addOnSuccessListener {
+                                println("${product.name} uploaded successfully with ID: ${docRef.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                println("Failed to upload ${product.name}: ${e.message}")
+                            }
+                    } else {
+                        println("Product ${product.name} already exists in the database.")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    println("Failed to check for existing product: ${e.message}")
+                }
+        }
+    }
+
+
+
+    suspend fun loadProducts(lastVisible: DocumentSnapshot? = null): Result<QuerySnapshot> {
+        return try {
+            // Building the query based on pagination
+            val query: Query = if (lastVisible == null) {
+                db.collection("products").limit(10) // initial load
+            } else {
+                db.collection("products").startAfter(lastVisible).limit(10) // paginate
+            }
+
+            val querySnapshot = query.get().await()  // Firebase Firestore call using await
+            Result.success(querySnapshot)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun updateProductQuantity(product: Product, newQuantity: Int) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("products")
+            .document(product.id)
+            .update("quantity", newQuantity)
+            .addOnSuccessListener {
+                println("Product quantity updated successfully.")
+            }
+            .addOnFailureListener { e ->
+                println("Failed to update product quantity: ${e.message}")
+            }
+    }
+
 }
