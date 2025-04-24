@@ -1,0 +1,162 @@
+Index: app/src/main/java/com/example/bpconveniencestore/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.bpconveniencestore\r\n\r\nimport android.os.Bundle\r\nimport android.widget.Toast\r\nimport androidx.activity.ComponentActivity\r\nimport androidx.activity.compose.setContent\r\nimport androidx.activity.enableEdgeToEdge\r\nimport androidx.compose.foundation.layout.*\r\nimport androidx.compose.foundation.text.KeyboardOptions\r\nimport androidx.compose.material3.*\r\nimport androidx.compose.runtime.*\r\nimport androidx.compose.ui.Modifier\r\nimport androidx.compose.ui.text.input.KeyboardType\r\nimport androidx.compose.ui.tooling.preview.Preview\r\nimport androidx.compose.ui.unit.dp\r\nimport androidx.navigation.NavController\r\nimport androidx.navigation.compose.*\r\nimport com.example.bpconveniencestore.ui.theme.BpConveniencestoreTheme\r\nimport com.google.firebase.auth.FirebaseAuth\r\n\r\nclass MainActivity : ComponentActivity() {\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        enableEdgeToEdge()\r\n        setContent {\r\n            BpConveniencestoreTheme {\r\n                val navController = rememberNavController()\r\n                NavHost(navController = navController, startDestination = \"login\") {\r\n                    composable(\"login\") { LoginScreen(navController) }\r\n                    composable(\"home\") { HomeScreen() }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\n@Composable\r\nfun LoginScreen(navController: NavController) {\r\n    val auth = FirebaseAuth.getInstance()\r\n    var email by remember { mutableStateOf(\"\") }\r\n    var password by remember { mutableStateOf(\"\") }\r\n    var loading by remember { mutableStateOf(false) }\r\n\r\n    Column(\r\n        modifier = Modifier.fillMaxSize().padding(16.dp),\r\n        verticalArrangement = Arrangement.Center\r\n    ) {\r\n        Text(\"Login to B & P Convenience Store\", style = MaterialTheme.typography.headlineSmall)\r\n        Spacer(modifier = Modifier.height(16.dp))\r\n\r\n        OutlinedTextField(\r\n            value = email,\r\n            onValueChange = { email = it },\r\n            label = { Text(\"Email\") },\r\n            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)\r\n        )\r\n        Spacer(modifier = Modifier.height(8.dp))\r\n\r\n        OutlinedTextField(\r\n            value = password,\r\n            onValueChange = { password = it },\r\n            label = { Text(\"Password\") },\r\n            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)\r\n        )\r\n        Spacer(modifier = Modifier.height(16.dp))\r\n\r\n        if (loading) {\r\n            CircularProgressIndicator()\r\n        } else {\r\n            Button(\r\n                onClick = {\r\n                    loading = true\r\n                    auth.signInWithEmailAndPassword(email, password)\r\n                        .addOnCompleteListener { task ->\r\n                            loading = false\r\n                            if (task.isSuccessful) {\r\n                                navController.navigate(\"home\")\r\n                            } else {\r\n                                Toast.makeText(\r\n                                    navController.context,\r\n                                    \"Login Failed: ${task.exception?.message}\",\r\n                                    Toast.LENGTH_SHORT\r\n                                ).show()\r\n                            }\r\n                        }\r\n                }\r\n            ) {\r\n                Text(\"Login\")\r\n            }\r\n        }\r\n\r\n        Spacer(modifier = Modifier.height(16.dp))\r\n        TextButton(onClick = { /* TODO: Navigate to SignUp Screen */ }) {\r\n            Text(\"Don't have an account? Sign Up\")\r\n        }\r\n    }\r\n}\r\n\r\n@Composable\r\nfun HomeScreen() {\r\n    Column(\r\n        modifier = Modifier.fillMaxSize().padding(16.dp),\r\n        verticalArrangement = Arrangement.Center\r\n    ) {\r\n        Text(\"Welcome to B & P Convenience Store!\", style = MaterialTheme.typography.headlineSmall)\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/bpconveniencestore/MainActivity.kt b/app/src/main/java/com/example/bpconveniencestore/MainActivity.kt
+--- a/app/src/main/java/com/example/bpconveniencestore/MainActivity.kt	(revision b736fca293678ebbacd0ea3de9a5bddd5bfa0b65)
++++ b/app/src/main/java/com/example/bpconveniencestore/MainActivity.kt	(date 1743876480189)
+@@ -1,4 +1,4 @@
+-package com.example.bpconveniencestore
++package com.example.bp_store
+ 
+ import android.os.Bundle
+ import android.widget.Toast
+Index: build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    alias(libs.plugins.android.application) apply false\r\n    alias(libs.plugins.kotlin.android) apply false\r\n    alias(libs.plugins.google.gms.google.services) apply false\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle.kts b/build.gradle.kts
+--- a/build.gradle.kts	(revision b736fca293678ebbacd0ea3de9a5bddd5bfa0b65)
++++ b/build.gradle.kts	(date 1744036406829)
+@@ -3,4 +3,6 @@
+     alias(libs.plugins.android.application) apply false
+     alias(libs.plugins.kotlin.android) apply false
+     alias(libs.plugins.google.gms.google.services) apply false
++    alias(libs.plugins.compose.compiler) apply false
++
+ }
+\ No newline at end of file
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    alias(libs.plugins.android.application)\r\n    alias(libs.plugins.kotlin.android)\r\n    alias(libs.plugins.google.gms.google.services)\r\n}\r\n\r\nandroid {\r\n    namespace = \"com.example.bpconveniencestore\"\r\n    compileSdk = 35\r\n\r\n    defaultConfig {\r\n        applicationId = \"com.example.bpconveniencestore\"\r\n        minSdk = 24\r\n        targetSdk = 34\r\n        versionCode = 1\r\n        versionName = \"1.0\"\r\n\r\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables {\r\n            useSupportLibrary = true\r\n        }\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            isMinifyEnabled = false\r\n            proguardFiles(\r\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\r\n                \"proguard-rules.pro\"\r\n            )\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility = JavaVersion.VERSION_1_8\r\n        targetCompatibility = JavaVersion.VERSION_1_8\r\n    }\r\n    kotlinOptions {\r\n        jvmTarget = \"1.8\"\r\n    }\r\n    buildFeatures {\r\n        compose = true\r\n    }\r\n    composeOptions {\r\n        kotlinCompilerExtensionVersion = \"1.5.1\"\r\n    }\r\n    packaging {\r\n        resources {\r\n            excludes += \"/META-INF/{AL2.0,LGPL2.1}\"\r\n        }\r\n    }\r\n    buildToolsVersion = \"36.0.0 rc5\"\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation(libs.androidx.core.ktx)\r\n    implementation(libs.androidx.lifecycle.runtime.ktx)\r\n    implementation(libs.androidx.activity.compose)\r\n    implementation(platform(libs.androidx.compose.bom))\r\n    implementation(libs.androidx.ui)\r\n    implementation(libs.androidx.ui.graphics)\r\n    implementation(libs.androidx.ui.tooling.preview)\r\n    implementation(libs.androidx.material3)\r\n    implementation(libs.firebase.auth)\r\n    implementation(libs.androidx.annotation)\r\n    implementation(libs.firebase.firestore)\r\n    testImplementation(libs.junit)\r\n    androidTestImplementation(libs.androidx.junit)\r\n    androidTestImplementation(libs.androidx.espresso.core)\r\n    androidTestImplementation(platform(libs.androidx.compose.bom))\r\n    androidTestImplementation(libs.androidx.ui.test.junit4)\r\n    debugImplementation(libs.androidx.ui.tooling)\r\n    debugImplementation(libs.androidx.ui.test.manifest)\r\n\r\n    implementation (\"com.google.android.gms:play-services-base:18.5.0\")\r\n\r\n\r\n    implementation(\"androidx.navigation:navigation-compose:2.8.4\")\r\n    implementation(\"androidx.compose.material:material:1.7.5\")\r\n\r\n    implementation (\"androidx.compose.material3:material3:1.0.0\")\r\n    implementation (\"androidx.compose.ui:ui:1.4.0\")\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision b736fca293678ebbacd0ea3de9a5bddd5bfa0b65)
++++ b/app/build.gradle.kts	(date 1744036347812)
+@@ -2,6 +2,12 @@
+     alias(libs.plugins.android.application)
+     alias(libs.plugins.kotlin.android)
+     alias(libs.plugins.google.gms.google.services)
++
++        // Existing plugins
++    alias(libs.plugins.compose.compiler)
++
++
++
+ }
+ 
+ android {
+@@ -64,6 +70,8 @@
+     implementation(libs.firebase.auth)
+     implementation(libs.androidx.annotation)
+     implementation(libs.firebase.firestore)
++    implementation(libs.androidx.navigation.compose)
++    implementation(libs.androidx.navigation.runtime.ktx)
+     testImplementation(libs.junit)
+     androidTestImplementation(libs.androidx.junit)
+     androidTestImplementation(libs.androidx.espresso.core)
+@@ -72,13 +80,16 @@
+     debugImplementation(libs.androidx.ui.tooling)
+     debugImplementation(libs.androidx.ui.test.manifest)
+ 
+-    implementation ("com.google.android.gms:play-services-base:18.5.0")
++    implementation (libs.play.services.base)
+ 
+ 
+-    implementation("androidx.navigation:navigation-compose:2.8.4")
+-    implementation("androidx.compose.material:material:1.7.5")
++    implementation(libs.androidx.navigation.compose.v284)
++    implementation(libs.androidx.material)
+ 
+-    implementation ("androidx.compose.material3:material3:1.0.0")
+-    implementation ("androidx.compose.ui:ui:1.4.0")
++    implementation (libs.material3)
++    implementation (libs.ui)
+ 
+-}
+\ No newline at end of file
++    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
++    implementation("com.google.firebase:firebase-analytics")
++
++}
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.BpConveniencestore\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\"\r\n            android:label=\"@string/app_name\"\r\n            android:theme=\"@style/Theme.BpConveniencestore\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision b736fca293678ebbacd0ea3de9a5bddd5bfa0b65)
++++ b/app/src/main/AndroidManifest.xml	(date 1742951003117)
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools">
++    <uses-permission android:name="android.permission.INTERNET" />
+ 
+     <application
+         android:allowBackup="true"
+Index: gradle/libs.versions.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[versions]\r\nagp = \"8.6.0-rc01\"\r\nkotlin = \"1.9.0\"\r\ncoreKtx = \"1.15.0\"\r\njunit = \"4.13.2\"\r\njunitVersion = \"1.2.1\"\r\nespressoCore = \"3.6.1\"\r\nlifecycleRuntimeKtx = \"2.8.7\"\r\nactivityCompose = \"1.10.0\"\r\ncomposeBom = \"2024.04.01\"\r\ngoogleGmsGoogleServices = \"4.4.2\"\r\nfirebaseAuth = \"23.2.0\"\r\ncredentials = \"1.5.0-rc01\"\r\ncredentialsPlayServicesAuth = \"1.3.0\"\r\ngoogleid = \"1.1.1\"\r\nannotation = \"1.9.1\"\r\nfirebaseFirestore = \"25.1.3\"\r\n\r\n[libraries]\r\nandroidx-core-ktx = { group = \"androidx.core\", name = \"core-ktx\", version.ref = \"coreKtx\" }\r\njunit = { group = \"junit\", name = \"junit\", version.ref = \"junit\" }\r\nandroidx-junit = { group = \"androidx.test.ext\", name = \"junit\", version.ref = \"junitVersion\" }\r\nandroidx-espresso-core = { group = \"androidx.test.espresso\", name = \"espresso-core\", version.ref = \"espressoCore\" }\r\nandroidx-lifecycle-runtime-ktx = { group = \"androidx.lifecycle\", name = \"lifecycle-runtime-ktx\", version.ref = \"lifecycleRuntimeKtx\" }\r\nandroidx-activity-compose = { group = \"androidx.activity\", name = \"activity-compose\", version.ref = \"activityCompose\" }\r\nandroidx-compose-bom = { group = \"androidx.compose\", name = \"compose-bom\", version.ref = \"composeBom\" }\r\nandroidx-ui = { group = \"androidx.compose.ui\", name = \"ui\" }\r\nandroidx-ui-graphics = { group = \"androidx.compose.ui\", name = \"ui-graphics\" }\r\nandroidx-ui-tooling = { group = \"androidx.compose.ui\", name = \"ui-tooling\" }\r\nandroidx-ui-tooling-preview = { group = \"androidx.compose.ui\", name = \"ui-tooling-preview\" }\r\nandroidx-ui-test-manifest = { group = \"androidx.compose.ui\", name = \"ui-test-manifest\" }\r\nandroidx-ui-test-junit4 = { group = \"androidx.compose.ui\", name = \"ui-test-junit4\" }\r\nandroidx-material3 = { group = \"androidx.compose.material3\", name = \"material3\" }\r\nfirebase-auth = { group = \"com.google.firebase\", name = \"firebase-auth\", version.ref = \"firebaseAuth\" }\r\nandroidx-credentials = { group = \"androidx.credentials\", name = \"credentials\", version.ref = \"credentials\" }\r\nandroidx-credentials-play-services-auth = { group = \"androidx.credentials\", name = \"credentials-play-services-auth\", version.ref = \"credentialsPlayServicesAuth\" }\r\ngoogleid = { group = \"com.google.android.libraries.identity.googleid\", name = \"googleid\", version.ref = \"googleid\" }\r\nandroidx-annotation = { group = \"androidx.annotation\", name = \"annotation\", version.ref = \"annotation\" }\r\nfirebase-firestore = { group = \"com.google.firebase\", name = \"firebase-firestore\", version.ref = \"firebaseFirestore\" }\r\n\r\n[plugins]\r\nandroid-application = { id = \"com.android.application\", version.ref = \"agp\" }\r\nkotlin-android = { id = \"org.jetbrains.kotlin.android\", version.ref = \"kotlin\" }\r\ngoogle-gms-google-services = { id = \"com.google.gms.google-services\", version.ref = \"googleGmsGoogleServices\" }\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+--- a/gradle/libs.versions.toml	(revision b736fca293678ebbacd0ea3de9a5bddd5bfa0b65)
++++ b/gradle/libs.versions.toml	(date 1742951128881)
+@@ -1,6 +1,6 @@
+ [versions]
+ agp = "8.6.0-rc01"
+-kotlin = "1.9.0"
++kotlin = "2.1.0"
+ coreKtx = "1.15.0"
+ junit = "4.13.2"
+ junitVersion = "1.2.1"
+@@ -15,9 +15,18 @@
+ googleid = "1.1.1"
+ annotation = "1.9.1"
+ firebaseFirestore = "25.1.3"
++material = "1.7.8"
++material3 = "1.3.1"
++navigationCompose = "2.8.9"
++navigationComposeVersion = "2.8.4"
++navigationRuntimeKtx = "2.8.9"
++playServicesBase = "18.6.0"
++ui = "1.7.8"
+ 
+ [libraries]
+ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
++androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
++androidx-navigation-compose-v284 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+ junit = { group = "junit", name = "junit", version.ref = "junit" }
+ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+@@ -37,9 +46,16 @@
+ googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+ androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
++androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
++androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
++material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
++play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "playServicesBase" }
++ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
+ 
+ [plugins]
+ android-application = { id = "com.android.application", version.ref = "agp" }
+ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+ 
++#// Add this line
++compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
