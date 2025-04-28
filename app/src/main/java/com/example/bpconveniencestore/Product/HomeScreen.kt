@@ -1,51 +1,39 @@
 package com.example.bpconveniencestore.Product
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import android.widget.Toast
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.bpconveniencestore.Firebase.FirebaseHelper
+import com.example.bpconveniencestore.Product.Model.AddProductDialog
 import com.example.bpconveniencestore.Product.Model.Product
 import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
-import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
+import com.google.firebase.firestore.DocumentSnapshot
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController, navigateToCart: () -> Unit) {
     val user = UserPreferences.getUserData()
     val products = remember { mutableStateListOf<Product>() }
     var loading by remember { mutableStateOf(false) }
     var lastVisible: DocumentSnapshot? by remember { mutableStateOf(null) }
     var endReached by remember { mutableStateOf(false) }
 
-
     val firebaseHelper = FirebaseHelper()
 
     // Coroutine scope for async fetching
     val coroutineScope = rememberCoroutineScope()
+
+    // State for showing the Add Product Dialog (Admin only)
+    var showAddProductDialog by remember { mutableStateOf(false) }
 
     // Function to load more products (pagination)
     fun loadMoreProducts() {
@@ -77,64 +65,73 @@ fun HomeScreen() {
     }
 
     fun refreshProducts() {
-        endReached=false
+        endReached = false
         lastVisible = null
         products.clear()
         loadMoreProducts()
     }
+
     val fabContent: @Composable (() -> Unit) =
         if (user.usertype == "admin") {
             {
-                ///Todo  add click for new page navigation Super Admin
-                FloatingActionButton(onClick = {}) {
+                // Admin's FAB to add a new product
+                FloatingActionButton(onClick = { showAddProductDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add"
+                        contentDescription = "Add Product"
                     )
                 }
             }
         } else {
             {
-                ///Todo  add click for new page navigation Customers
-                /*
-                * New Page To show Customer Items
-                *
-                * */
-                FloatingActionButton(onClick = { /* Handle click */ }) {
+                // Customer's FAB to go to the cart
+                FloatingActionButton(onClick = { navigateToCart() }) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Add"
+                        contentDescription = "Go to Cart"
                     )
                 }
             }
         }
-    Scaffold(
 
+    // Add Product Dialog (Admin only)
+    if (showAddProductDialog) {
+        AddProductDialog(
+            onDismiss = { showAddProductDialog = false },
+            onAddProduct = { product ->
+                firebaseHelper.addProduct(product) // Add product to Firebase
+                products.add(0, product) // Add product to the list locally
+                showAddProductDialog = false // Close the dialog after adding the product
+            }
+        )
+    }
+
+    Scaffold(
         floatingActionButton = fabContent,
         topBar = {
-            TopAppBar(
-                title = { Text("BP Convenience Store") }
-            )
+            TopAppBar(title = { Text("BP Convenience Store") })
         }
-
     ) { innerPadding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding) // respect Scaffold's padding (for AppBar)
-                .padding(16.dp)        // custom screen padding
+                .padding(innerPadding)
+                .padding(16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // LazyColumn displaying products
-            // LazyColumn displaying products
+            // LazyColumn to display products
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp)
             ) {
                 items(products.size) { product ->
-                    ProductCard(product = products[product], loadMoreProducts = { refreshProducts() })
+                    ProductCard(
+                        product = products[product],
+                        loadMoreProducts = { refreshProducts() },
+                        onAddToCart = { selectedProduct ->
+                            CartManager.addItem(selectedProduct)
+                        })
                     Spacer(modifier = Modifier.height(12.dp))
                 }
 
@@ -143,13 +140,10 @@ fun HomeScreen() {
                     when {
                         loading -> CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                         !endReached -> loadMoreProducts()
-                        else -> Spacer(modifier = Modifier.height(16.dp)) // or "No more items" text
+                        else -> Spacer(modifier = Modifier.height(16.dp)) // No more items
                     }
                 }
-
             }
         }
     }
 }
-
-

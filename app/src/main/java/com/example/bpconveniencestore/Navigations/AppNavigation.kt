@@ -7,6 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.bpconveniencestore.Cart.CartScreen
+import com.example.bpconveniencestore.Product.CartManager
 import com.example.bpconveniencestore.Product.HomeScreen
 import com.example.bpconveniencestore.nonAuth.LoginScreen
 import com.example.bpconveniencestore.nonAuth.RegistrationScreen
@@ -59,6 +61,20 @@ fun NavGraphBuilder.unauthenticatedNavRoutes(navController: NavHostController) {
 
 fun NavGraphBuilder.authenticatedNavRoutes(navController: NavHostController) {
     composable(Route.Home) {
-        HomeScreen()
+        HomeScreen(navController,
+            navigateToCart = {
+                navController.navigate(Route.Cart)  // Navigate to Cart
+            }
+
+            )
+    }
+
+    composable(Route.Cart) {   // 👈 New Cart Route
+        CartScreen(
+
+            cartItems = CartManager.cartItems,
+            cartManager = CartManager
+
+        )
     }
 }

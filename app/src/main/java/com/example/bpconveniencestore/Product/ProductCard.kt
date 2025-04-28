@@ -21,7 +21,9 @@ import com.example.bpconveniencestore.Product.Model.Product
 import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 
 @Composable
-fun ProductCard(product: Product, loadMoreProducts: () -> Unit){
+
+
+fun ProductCard(product: Product, loadMoreProducts: () -> Unit, onAddToCart: (Product) -> Unit ){
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -40,6 +42,7 @@ fun ProductCard(product: Product, loadMoreProducts: () -> Unit){
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(16.dp)
+
                 )
             }
 
@@ -63,7 +66,10 @@ fun ProductCard(product: Product, loadMoreProducts: () -> Unit){
                     }
                 } else {
                     if (product.quantity != 0) {
-                        Button(onClick = { /* Add to cart or buy */ }) {
+                        Button(onClick = {
+                            onAddToCart(product)
+
+                        /* Add to cart or buy */ }) {
                             Text("Buy")
                         }
                     } else {

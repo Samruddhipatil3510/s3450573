@@ -1,5 +1,6 @@
 package com.example.bpconveniencestore.Firebase
 
+import android.util.Log
 import com.example.bpconveniencestore.Product.Model.Product
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentSnapshot
@@ -139,6 +140,26 @@ class FirebaseHelper(
             .addOnFailureListener { e ->
                 println("Failed to update product quantity: ${e.message}")
             }
+    }
+
+    fun addProduct(product: Any) {
+
+    }
+    class FirebaseHelper {
+
+        fun addProduct(product: Product) {
+            val db = FirebaseFirestore.getInstance()
+            val productRef = db.collection("products").document(product.id)
+            productRef.set(product).addOnSuccessListener {
+                Log.d("FirebaseHelper", "Product added successfully")
+            }.addOnFailureListener {
+                Log.e("FirebaseHelper", "Error adding product", it)
+            }
+        }
+
+        fun loadProducts(lastVisible: DocumentSnapshot?) {
+            // Implement loading products with pagination
+        }
     }
 
 }
