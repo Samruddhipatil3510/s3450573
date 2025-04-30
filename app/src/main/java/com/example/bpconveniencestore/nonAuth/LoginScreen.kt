@@ -1,6 +1,7 @@
 package com.example.bpconveniencestore.nonAuth
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +20,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bpconveniencestore.Firebase.FirebaseHelper
 import com.example.bpconveniencestore.Firebase.Firebase_auth
+import com.example.bpconveniencestore.R
 import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 
 @Composable
@@ -34,8 +38,8 @@ fun LoginScreen(
     onRegisterClick: () -> Unit
 ) {
     val authService = Firebase_auth()
-    var email by remember { mutableStateOf("adil@gmail.com") }
-    var password by remember { mutableStateOf("Adil123") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
     val firebaseHelper = remember { FirebaseHelper() }
 
@@ -43,6 +47,14 @@ fun LoginScreen(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
+        // Logo at top
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "App Logo",
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .height(150.dp) // adjust size as needed
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text("Login to B & P Convenience Store", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
 
