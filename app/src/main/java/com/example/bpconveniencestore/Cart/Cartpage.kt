@@ -7,7 +7,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.bpconveniencestore.Product.CartManager
 import com.example.bpconveniencestore.Product.Model.Product
 
 @Composable

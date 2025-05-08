@@ -1,6 +1,5 @@
-package com.example.bpconveniencestore.Product
+package com.example.bpconveniencestore.MainPage
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -12,8 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.bpconveniencestore.Firebase.FirebaseHelper
-import com.example.bpconveniencestore.Product.Model.AddProductDialog
+import com.example.bpconveniencestore.Product.AddProductDialog
+import com.example.bpconveniencestore.Cart.CartManager
 import com.example.bpconveniencestore.Product.Model.Product
+import com.example.bpconveniencestore.Product.ProductCard
 import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 import kotlinx.coroutines.launch
 import com.google.firebase.firestore.DocumentSnapshot
@@ -99,8 +100,8 @@ fun HomeScreen(navController: NavHostController, navigateToCart: () -> Unit) {
         AddProductDialog(
             onDismiss = { showAddProductDialog = false },
             onAddProduct = { product ->
-                firebaseHelper.addProduct(product) // Add product to Firebase
-                products.add(0, product) // Add product to the list locally
+                products.add(0, product)
+                firebaseHelper.storeProducts(products) // Add product to Firebase
                 showAddProductDialog = false // Close the dialog after adding the product
             }
         )
@@ -131,6 +132,7 @@ fun HomeScreen(navController: NavHostController, navigateToCart: () -> Unit) {
                         loadMoreProducts = { refreshProducts() },
                         onAddToCart = { selectedProduct ->
                             CartManager.addItem(selectedProduct)
+                            firebaseHelper.updateProductQuantity(selectedProduct,selectedProduct.quantity-1)
                         })
                     Spacer(modifier = Modifier.height(12.dp))
                 }

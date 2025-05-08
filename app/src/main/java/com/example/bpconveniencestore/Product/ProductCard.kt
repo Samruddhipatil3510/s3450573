@@ -67,7 +67,9 @@ fun ProductCard(product: Product, loadMoreProducts: () -> Unit, onAddToCart: (Pr
                 } else {
                     if (product.quantity != 0) {
                         Button(onClick = {
-                            onAddToCart(product)
+                            if (product.quantity != 0){
+                                onAddToCart(product)
+                        }
 
                         /* Add to cart or buy */ }) {
                             Text("Buy")

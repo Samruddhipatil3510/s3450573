@@ -1,4 +1,4 @@
-package com.example.bpconveniencestore.Product.Model
+package com.example.bpconveniencestore.Product
 
 import androidx.compose.foundation.text.KeyboardOptions
 

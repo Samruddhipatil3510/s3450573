@@ -2,28 +2,15 @@ package com.example.bpconveniencestore.nonAuth
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bpconveniencestore.Firebase.FirebaseHelper
@@ -34,76 +21,98 @@ import com.example.bpconveniencestore.Sharedprefrencespackage.UserPreferences
 @Composable
 fun LoginScreen(
     navController: NavController,
-    onLoginSuccess: () -> Unit,
-    onRegisterClick: () -> Unit
+    onLoginSuccess: () -> Unit,    // Callback to trigger after successful login
+    onRegisterClick: () -> Unit    // Callback to navigate to registration screen
 ) {
-    val authService = Firebase_auth()
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var loading by remember { mutableStateOf(false) }
-    val firebaseHelper = remember { FirebaseHelper() }
+    val authService = Firebase_auth()  // Firebase auth helper instance
+    var email by remember { mutableStateOf("") }        // Email input state
+    var password by remember { mutableStateOf("") }     // Password input state
+    var loading by remember { mutableStateOf(false) }   // Loading spinner state
+    val firebaseHelper = remember { FirebaseHelper() }  // Helper to fetch user data from Firestore
 
+    // Layout for login screen
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        // Logo at top
+        // App logo
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "App Logo",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-                .height(150.dp) // adjust size as needed
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .height(150.dp) // Set height of the logo image
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Login to B & P Convenience Store", style = MaterialTheme.typography.headlineSmall)
+
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Title
+        Text("Login to B & P Convenience Store", style = MaterialTheme.typography.headlineSmall)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Email input field
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Password input field
         OutlinedTextField(
             value = password,
+            visualTransformation = PasswordVisualTransformation(),
             onValueChange = { password = it },
             label = { Text("Password") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Loading spinner shown when logging in
         if (loading) {
             CircularProgressIndicator()
         } else {
+            // Login button
             Button(
                 onClick = {
-                    loading = true
+                    loading = true  // Show spinner while processing login
 
+                    // Firebase authentication
                     authService.signInWithEmail(email, password) { task ->
                         if (task.isSuccessful) {
                             val user = task.result?.user
 
                             if (user != null) {
+                                // Fetch additional user data from Firestore
                                 firebaseHelper.getUserByEmail(user.email.toString()) { userData ->
                                     if (userData != null) {
                                         val name = userData["name"].toString()
                                         val email = userData["email"].toString()
                                         val password = userData["password"].toString()
-                                        val usertype=userData["usertype"].toString()// if you store this (not recommended)
-                                        UserPreferences.saveUserData(name, email, password,usertype)
+                                        val usertype = userData["usertype"].toString() // Caution: Avoid storing passwords in plaintext
+
+                                        // Save user data locally (SharedPreferences or similar)
+                                        UserPreferences.saveUserData(name, email, password, usertype)
                                         println("Name: $name, Email: $email")
                                     } else {
                                         println("No user found with that email.")
                                     }
                                 }
                             }
+
+                            // Navigate to home screen
                             onLoginSuccess()
-                            loading=false
+                            loading = false
                             println("Login successful: ${user?.email}")
                         } else {
-                            loading=false
+                            // Login failed - show error message
+                            loading = false
                             Toast.makeText(
                                 navController.context,
                                 "Login Failed: ${task.exception?.message}",
@@ -117,7 +126,10 @@ fun LoginScreen(
                 Text("Login")
             }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
+
+        // Button to navigate to registration screen
         TextButton(onClick = onRegisterClick) {
             Text("Don't have an account? Sign Up")
         }

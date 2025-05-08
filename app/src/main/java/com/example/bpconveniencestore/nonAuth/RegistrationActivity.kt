@@ -83,6 +83,7 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = password,
+            visualTransformation = PasswordVisualTransformation(),
             onValueChange = { password = it },
             label = { Text("Password") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)

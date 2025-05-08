@@ -1,4 +1,4 @@
-package com.example.bpconveniencestore.Product
+package com.example.bpconveniencestore.Cart
 
 import androidx.compose.runtime.mutableStateListOf
 import com.example.bpconveniencestore.Product.Model.Product

@@ -17,12 +17,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Shared prefrences initialize
         UserPreferences.init(this)
+        //Firebase initialize
         val firebaseHelper =  FirebaseHelper()
+        //push sample products to firebase if not exist
         firebaseHelper.storeProducts(sampleProducts)
         enableEdgeToEdge()
         setContent {
             BpConveniencestoreTheme {
+// Navigation controller initialize
                 val navController = rememberNavController()
                 AppNavigation(navController = navController)
 
